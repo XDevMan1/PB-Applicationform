@@ -42,10 +42,15 @@
       cursor: pointer;
       font-size: 16px;
     }
+
+    .success-message {
+      color: green;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
-  
+
   <div class="form-container">
     <label for="question1">What is your Real Discord user?</label>
     <input type="text" id="question1" placeholder="Please tell your real user">
@@ -73,29 +78,26 @@
     <label for="question5">What is your skill?</label>
     <h3>Ex: What will you do if someone spams?</h3>
     <input type="text" id="question5" placeholder="Tell us what you will do if someone spams">
-    
 
     <button onclick="submitForm()">Submit</button>
+    
+    <p class="success-message" id="successMessage"></p>
   </div>
 
   <script>
     function submitForm() {
-      
       var answer1 = document.getElementById("question1").value;
       var answer2 = document.getElementById("question2").value;
-      var answer3 = document.getElementById("question3").value;
+      var answer3 = document.getElementById("question3Text").value;
       var answer4 = document.getElementById("question4").value;
       var answer5 = document.getElementById("question5").value;
 
-      
       var data = {
         content: `Answers:\nUsername: ${answer1}\nRole: ${answer2}\nReason: ${answer3}\nActive: ${answer4}\nSkills: ${answer5}`
       };
 
-      
-      var webhookUrl = 'https://discord.com/api/webhooks/1191205352801308782/udn-lsWs1nWA6l4OSt0LKk7zb8sa3ucNlaIjUP_8PgKmXnU38XoSI4UMMnd9qU4XCM0X';
+      var webhookUrl = 'https://discord.com/api/webhooks/1191255587774812190/H9UfzMOHfKxegl0G8LEcru29AbRAeliYDRlkTvNkOe9PPxsqbq9zhlggVWCYAdHRw_ul';
 
-      
       fetch(webhookUrl, {
         method: 'POST',
         headers: {
@@ -107,11 +109,15 @@
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
+        document.getElementById("successMessage").textContent = 'Your form has been submitted.';
         console.log('Form submitted successfully');
       })
       .catch(error => {
         console.error('Error:', error);
       });
+
+     
+      document.getElementById("submitBtn").disabled = true;
     }
   </script>
 
