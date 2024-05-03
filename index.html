@@ -1,125 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PB Application Form</title>
-  <style>
-    body {
-      background-color: white;
-      font-family: 'Arial', sans-serif;
-    }
-
-    .form-container {
-      max-width: 600px;
-      margin: auto;
-      padding: 20px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 16px;
-    }
-
-    select {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 16px;
-    }
-
-    button {
-      background-color: #000;
-      color: white;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .success-message {
-      color: green;
-      margin-top: 10px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PB Application Form</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="container">
+        <h1>Pb Form</h1>
+        <form id="application-form">
+            <div id="timer" class="timer">Applications close in: <span id="days"></span> days</div>
+            <label for="name">Username:</label><br>
+            <input type="text" id="name" name="name" placeholder="Please tell us your real discord user." required><br><br>
+            
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" placeholder="Tell us your email so we can email you if you are not very active" required><br><br>
+            
+            <label for="active">How active are you?</label><br>
+            <select id="active" name="active" required>
+                <option value="N/A">N/A</option>
+                <option value="very-active">Very active</option>
+                <option value="mostly-active">Mostly active</option>
+                <option value="moderately-active">Moderately active</option>
+                <option value="barely-active">Barely active</option>
+            </select><br><br>
+            
+            <label for="role">What role you are applying?</label><br>
+            <select id="role" name="role" required>
+                <option value="N/A">N/A</option>
+                <option value="Developer">Developer</option>
+                <option value="Staff">Staff</option>
+                <option value="Helper">Helper</option>
+            </select><br><br>
+            
+            <label for="skills">Skills:</label><br>
+            <textarea id="skills" name="skills" rows="4" cols="50" placeholder="Please tell us your skills like coding or others." required></textarea><br><br>
+            
+            <label for="reason">Reason for applying:</label><br>
+            <textarea id="reason" name="reason" rows="4" cols="50" placeholder="Tell us a reason why you want this role?" required></textarea><br><br>
+            
+            <button type="submit" class="glow-on-hover">Submit</button>
+        </form>
+    </div>
 
-  <div class="form-container">
-    <label for="question1">What is your Real Discord user?</label>
-    <input type="text" id="question1" placeholder="Please tell your real user">
+    <script>
+        const form = document.getElementById('application-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-    <label for="question2">What role do you want?</label>
-    <select id="question2">
-      <option value="N/A">N/A</option>
-      <option value="Staff">Staff</option>
-      <option value="Dev">Dev</option>
-      <option value="Helper">Helper</option>
-    </select>
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
 
-    <label for="question3">Why do you want this role?</label>
-    <input type="text" id="question3Text" placeholder="a reason why you want this role">
+            const webhookURL = 'https://discord.com/api/webhooks/1236042676466352148/FylDwC5ABZ1Qv5PANMBjvv09pdRabYUh8WpNfwmuC2vDgHV8nhgbQlqXacx42iu6tiMK';
 
-    <label for="question4">How often are you active?</label>
-    <select id="question4">
-      <option value="N/A">N/A</option>
-      <option value="Very active">Very active</option>
-      <option value="Mostly active">Mostly active</option>
-      <option value="Moderately active">Moderately active</option>
-      <option value="Barely active">Barely active</option>
-    </select>
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: 'New application received!', embeds: [{ fields: [{ name: 'Username', value: data['name'] }, { name: 'Email', value: data['email'] }, { name: 'How active', value: data['active'] }, { name: 'Role applying for', value: data['role'] }, { name: 'Skills', value: data['skills'] }, { name: 'Reason for application', value: data['reason'] }] }] })
+            }).then(() => {
+                alert('Application submitted successfully!');
+                form.reset();
+            }).catch(() => {
+                alert('Failed to submit application. Please try again later.');
+            });
+        });
 
-    <label for="question5">What is your skill?</label>
-    <h3>Ex: What will you do if someone spams?</h3>
-    <input type="text" id="question5" placeholder="Tell us what you will do if someone spams">
+        function updateTimer() {
+            const currentDate = new Date();
+            const closingDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 20);
+            const remainingDays = Math.ceil((closingDate - currentDate) / (1000 * 60 * 60 * 24));
 
-    <button onclick="submitForm()">Submit</button>
-    
-    <p class="success-message" id="successMessage"></p>
-  </div>
-
-  <script>
-    function submitForm() {
-      var answer1 = document.getElementById("question1").value;
-      var answer2 = document.getElementById("question2").value;
-      var answer3 = document.getElementById("question3Text").value;
-      var answer4 = document.getElementById("question4").value;
-      var answer5 = document.getElementById("question5").value;
-
-      var data = {
-        content: `Answers:\nUsername: ${answer1}\nRole: ${answer2}\nReason: ${answer3}\nActive: ${answer4}\nSkills: ${answer5}`
-      };
-
-      var webhookUrl = 'https://discord.com/api/webhooks/1191255587774812190/H9UfzMOHfKxegl0G8LEcru29AbRAeliYDRlkTvNkOe9PPxsqbq9zhlggVWCYAdHRw_ul';
-
-      fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
+            document.getElementById('days').textContent = remainingDays;
         }
-        document.getElementById("successMessage").textContent = 'Your form has been submitted.';
-        console.log('Form submitted successfully');
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
 
-     
-      document.getElementById("submitBtn").disabled = true;
-    }
-  </script>
+        
+        updateTimer();
 
+        
+        setInterval(updateTimer, 1000 * 60 * 60 * 24);
+    </script>
 </body>
 </html>
